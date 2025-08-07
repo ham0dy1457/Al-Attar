@@ -1,0 +1,15 @@
+:root {
+  --black: rgba(20, 23, 24, 1);
+  --secondary: rgba(239, 147, 35, 1);
+  --primary: rgba(255, 255, 255, 1);
+  --white: rgba(243, 243, 243, 1);
+  --text-2: rgba(0, 0, 0, 1);
+  --balck: rgba(20, 23, 24, 1);
+  --grey: rgba(178, 178, 178, 1);
+  --headings-3-font-family: "Poppins", Helvetica;
+  --headings-3-font-weight: 500;
+  --headings-3-font-size: 16px;
+  --headings-3-letter-spacing: 0px;
+  --headings-3-line-height: normal;
+  --headings-3-font-style: normal;
+}
