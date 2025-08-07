@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="css/globals.css" />
+    <link rel="stylesheet" href="css/styleguide.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      /* Mobile Menu Styles */
+      .mobile-menu {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 280px;
+        height: 100vh;
+        background: #ffffff;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+      }
+      
+      .mobile-menu.active {
+        left: 0;
+      }
+      
+      .menu-header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        background: #f8f9fa;
+      }
+      
+      .menu-user {
+        font-family: "Poppins", Helvetica;
+        font-weight: 600;
+        color: #333;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      
+      .menu-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+      }
+      
+      .menu-items {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+      
+      .menu-items li {
+        border-bottom: 1px solid #f0f0f0;
+      }
+      
+      .menu-items a {
+        display: block;
+        padding: 15px 20px;
+        color: #333;
+        text-decoration: none;
+        font-family: "Poppins", Helvetica;
+        font-size: 14px;
+        transition: background-color 0.2s ease;
+      }
+      
+      .menu-items a:hover {
+        background-color: #f8f9fa;
+      }
+      
+      .menu-items .submenu {
+        padding-left: 20px;
+        background: #fafafa;
+      }
+      
+      .menu-items .submenu a {
+        padding: 10px 20px;
+        font-size: 13px;
+        color: #666;
+      }
+      
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      
+      .overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      /* Animation classes */
+      .fade-in {
+        animation: fadeIn 0.5s ease-in;
+      }
+      
+      .slide-in {
+        animation: slideIn 0.3s ease-out;
+      }
+      
+      .bounce {
+        animation: bounce 0.6s ease;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      @keyframes slideIn {
+        from { transform: translateX(-20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+      }
+      
+      /* Interactive elements */
+      .nav-link {
+        cursor: pointer;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+      
+      .nav-link:hover {
+        transform: scale(1.1);
+        opacity: 0.8;
+      }
+      
+      .nav-link:active {
+        transform: scale(0.95);
+      }
+      
+      /* Footer link hover effects */
+      .footer-link {
+        color: inherit !important;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        cursor: pointer;
+      }
+      
+      .footer-link:hover {
+        color: #b45309 !important; /* Dark yellow */
+      }
+      
+      .footer-link .text-wrapper-15 {
+        color: var(--white) !important;
+        transition: color 0.3s ease;
+      }
+      
+      .footer-link:hover .text-wrapper-15 {
+        color: #b45309 !important; /* Dark yellow */
+      }
+      
+      .footer-link .text-wrapper-17 {
+        color: var(--text) !important;
+        transition: color 0.3s ease;
+      }
+      
+      .footer-link:hover .text-wrapper-17 {
+        color: #b45309 !important; /* Dark yellow */
+      }
+      
+      /* Search box styles */
+      .search-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 2000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .search-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .search-box {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        transform: translateY(-20px);
+        transition: transform 0.3s ease;
+      }
+      
+      .search-overlay.active .search-box {
+        transform: translateY(0);
+      }
+      
+      .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      
+      .search-title {
+        font-family: "Poppins", Helvetica;
+        font-weight: 600;
+        color: #333;
+        font-size: 18px;
+      }
+      
+      .search-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .search-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-family: "Poppins", Helvetica;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+        margin-bottom: 15px;
+      }
+      
+      .search-input:focus {
+        outline: none;
+        border-color: #1e3a8a;
+      }
+      
+      .search-button {
+        width: 100%;
+        padding: 12px;
+        background: #1e3a8a;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-family: "Poppins", Helvetica;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      
+      .search-button:hover {
+        background: #1e40af;
+      }
+      
+      /* Product card hover effects */
+      .product-card {
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      }
+      
+      /* Button styles */
+      .action-btn {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      }
+      
+      .action-btn:active {
+        transform: translateY(0);
+      }
+      
+      /* Brand logos styles */
+      .brands-logos {
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      
+      .brands-logos::-webkit-scrollbar {
+        display: none;
+      }
+      
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 120px;
+        padding: 8px 12px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        margin-right: 16px;
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+      }
+      
+      .brand-logo:hover {
+        transform: scale(1.05);
+      }
+      
+      .logo-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+      }
+      
+      .logo-shape {
+        width: 20px;
+        height: 20px;
+        background: #6b7280;
+        border-radius: 4px;
+        position: relative;
+      }
+      
+      .logo-shape::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 10px;
+        height: 10px;
+        background: white;
+        border-radius: 50%;
+      }
+      
+      .logo-circle {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #6b7280;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .logo-waves {
+        width: 12px;
+        height: 8px;
+        position: relative;
+      }
+      
+      .logo-waves::before,
+      .logo-waves::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background: #6b7280;
+        border-radius: 1px;
+      }
+      
+      .logo-waves::before {
+        top: 0;
+        transform: rotate(-15deg);
+      }
+      
+      .logo-waves::after {
+        bottom: 0;
+        transform: rotate(15deg);
+      }
+      
+      .logo-text {
+        font-family: "Poppins", Helvetica;
+        font-weight: 600;
+        color: #6b7280;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="home-mini">
+      <div class="div">
+        <div class="overlap">
+          <div class="hero-adv">
+            <div class="overlap-group">
+              <div class="frame">
+                <div class="group">
+                  <div class="frame-2">
+                    <div class="div-2">
+                      <div class="text-wrapper">New Oppo Reno 13</div>
+                      <div class="up-to-off-voucher">Up to 25%<br />off Voucher</div>
+                    </div>
+                    <button class="button action-btn" onclick="goToProduct()">
+                      <div class="div-wrapper"><div class="text-wrapper-2">Explore More</div></div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <img class="switch-indicator" src="https://c.animaapp.com/me0c5zixpK3YId/img/switch-indicator.svg" />
+            </div>
+          </div>
+          <div class="nav-bar-mob">
+            <div class="frame-3">
+              <img class="vector nav-link" src="https://c.animaapp.com/me0c5zixpK3YId/img/vector.svg" onclick="toggleMenu()" />
+              <div class="hello-ahmed-salah">Hello,<br />Ahmed Salah</div>
+            </div>
+            <div class="frame-4">
+              <a href="index.html">
+                <img class="logo-removebg nav-link" src="https://c.animaapp.com/me0c5zixpK3YId/img/logo-removebg-1.png" />
+              </a>
+              <div class="frame-5">
+                <img class="img nav-link" src="https://c.animaapp.com/me0c5zixpK3YId/img/vector-1.svg" onclick="openSearch()" />
+                <a href="wishlist.html">
+                  <img class="heart nav-link" src="https://c.animaapp.com/me0c5zixpK3YId/img/heart.svg" />
+                </a>
+                <a href="cart.html">
+                  <img class="cart nav-link" src="https://c.animaapp.com/me0c5zixpK3YId/img/cart.svg" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Search Overlay -->
+        <div class="search-overlay" id="searchOverlay">
+          <div class="search-box">
+            <div class="search-header">
+              <div class="search-title">Search Products</div>
+              <button class="search-close" onclick="closeSearch()">&times;</button>
+            </div>
+            <input type="text" class="search-input" id="searchInput" placeholder="Enter your search term..." />
+            <button class="search-button" onclick="performSearch()">Search</button>
+          </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+          <div class="menu-header">
+            <button class="menu-close" onclick="toggleMenu()">&times;</button>
+            <div class="menu-user">Ahmed Salah</div>
+          </div>
+          <ul class="menu-items">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="category.html">Category</a></li>
+            <li>
+              <a href="#">First Level</a>
+              <ul class="submenu">
+                <li><a href="#">Second Level</a></li>
+                <li><a href="#">Third Level</a></li>
+              </ul>
+            </li>
+            <li><a href="wishlist.html">Wishlist</a></li>
+            <li><a href="cart.html">Cart</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="about.html">About</a></li>
+            <li>
+              <a href="account-profile.html">Account</a>
+              <ul class="submenu">
+                <li><a href="account-profile.html">First Level</a></li>
+                <li><a href="account-orders.html">First Level</a></li>
+                <li><a href="account-address.html">First Level</a></li>
+              </ul>
+            </li>
+            <li><a href="../arabic/index.html">Arabic</a></li>
+            <li><a href="login.html">Logout</a></li>
+          </ul>
+        </div>
+        
+        <!-- Overlay -->
+        <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+        
+        <div class="frame-6">
+          <div class="frame-wrapper">
+            <div class="frame-7">
+              <div class="rectangle"></div>
+              <div class="text-wrapper-3">Today's</div>
+            </div>
+          </div>
+          <div class="frame-8">
+            <div class="text-wrapper-4">Flash Sales</div>
+            <div class="group-2">
+              <div class="frame-9">
+                <div class="frame-10">
+                  <div class="text-wrapper-5">Days</div>
+                  <div class="text-wrapper-4">03</div>
+                </div>
+                <div class="semiclone">
+                  <div class="ellipse"></div>
+                  <div class="ellipse"></div>
+                </div>
+                <div class="frame-10">
+                  <div class="text-wrapper-5">Hours</div>
+                  <div class="text-wrapper-4">23</div>
+                </div>
+                <div class="semiclone">
+                  <div class="ellipse"></div>
+                  <div class="ellipse"></div>
+                </div>
+                <div class="frame-10">
+                  <div class="text-wrapper-5">Minutes</div>
+                  <div class="text-wrapper-4">19</div>
+                </div>
+              </div>
+            </div>
+            <div class="frame-11">
+              <div class="div-wrapper action-btn" onclick="goToFlashSale()"><div class="text-wrapper-6">View All</div></div>
+            </div>
+          </div>
+          <div class="frame-12">
+            <div class="group-3 product-card" onclick="goToProduct()">
+              <div class="elements-card">
+                <div class="overlap-group-2">
+                  <button class="button-hover action-btn"><div class="get-started">Add to cart</div></button>
+                  <img
+                    class="add-to-wishlist"
+                    src="https://c.animaapp.com/me0c5zixpK3YId/img/add-to----wishlist-1.svg"
+                  />
+                  <div class="badge-medium"><div class="new">- 20 %</div></div>
+                </div>
+              </div>
+              <div class="content">
+                <div class="div-2">
+                  <div class="frame-7">
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                  </div>
+                  <div class="div-2">
+                    <div class="text-wrapper-7">wireless headphones</div>
+                    <div class="discount">
+                      <div class="text-wrapper-8">120 EGP</div>
+                      <div class="text-wrapper-9">160 EGP</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="group-3 product-card" onclick="goToProduct()">
+              <div class="elements-card">
+                <div class="overlap-group-2">
+                  <button class="button-hover action-btn"><div class="get-started">Add to cart</div></button>
+                  <img
+                    class="add-to-wishlist"
+                    src="https://c.animaapp.com/me0c5zixpK3YId/img/add-to----wishlist-2.svg"
+                  />
+                  <div class="badge-medium"><div class="new">- 20 %</div></div>
+                </div>
+              </div>
+              <div class="content">
+                <div class="div-2">
+                  <div class="frame-7">
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                  </div>
+                  <div class="div-2">
+                    <div class="text-wrapper-7">wireless headphones</div>
+                    <div class="discount">
+                      <div class="text-wrapper-8">120 EGP</div>
+                      <div class="text-wrapper-9">160 EGP</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="frame-13">
+          <div class="frame-wrapper">
+            <div class="frame-7">
+              <div class="rectangle"></div>
+              <div class="text-wrapper-3">Featured</div>
+            </div>
+          </div>
+          <div class="frame-14">
+            <div class="text-wrapper-10">New Arrival</div>
+            <div class="frame-11">
+              <div class="div-wrapper action-btn" onclick="goToCategory()"><div class="text-wrapper-6">View All</div></div>
+            </div>
+          </div>
+          <div class="frame-15">
+            <div class="group-3 product-card" onclick="goToProduct()">
+              <div class="elements-card">
+                <div class="overlap-group-2">
+                  <button class="button-hover action-btn"><div class="get-started">Add to cart</div></button>
+                  <img
+                    class="add-to-wishlist-2"
+                    src="https://c.animaapp.com/me0c5zixpK3YId/img/add-to----wishlist-5.svg"
+                  />
+                  <div class="new-wrapper"><div class="new-2">NEW</div></div>
+                </div>
+              </div>
+              <div class="content">
+                <div class="div-2">
+                  <div class="frame-7">
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                  </div>
+                  <div class="div-2">
+                    <div class="text-wrapper-7">wireless headphones</div>
+                    <div class="discount">
+                      <div class="text-wrapper-8">120 EGP</div>
+                      <div class="text-wrapper-9">160 EGP</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="group-3 product-card" onclick="goToProduct()">
+              <div class="elements-card">
+                <div class="overlap-group-2">
+                  <button class="button-hover action-btn"><div class="get-started">Add to cart</div></button>
+                  <img
+                    class="add-to-wishlist-2"
+                    src="https://c.animaapp.com/me0c5zixpK3YId/img/add-to----wishlist-4.svg"
+                  />
+                  <div class="new-wrapper"><div class="new-2">NEW</div></div>
+                </div>
+              </div>
+              <div class="content">
+                <div class="div-2">
+                  <div class="frame-7">
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                  </div>
+                  <div class="div-2">
+                    <div class="text-wrapper-7">wireless headphones</div>
+                    <div class="discount">
+                      <div class="text-wrapper-8">120 EGP</div>
+                      <div class="text-wrapper-9">160 EGP</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="frame-16">
+          <div class="frame-wrapper">
+            <div class="frame-7">
+              <div class="rectangle"></div>
+              <div class="text-wrapper-3">This Month</div>
+            </div>
+          </div>
+          <div class="frame-14">
+            <div class="text-wrapper-10">Best Selling</div>
+            <div class="frame-11">
+              <div class="div-wrapper action-btn" onclick="goToCategory()"><div class="text-wrapper-6">View All</div></div>
+            </div>
+          </div>
+          <div class="frame-15">
+            <div class="group-3 product-card" onclick="goToProduct()">
+              <div class="elements-card">
+                <div class="overlap-group-2">
+                  <button class="button-hover action-btn"><div class="get-started">Add to cart</div></button>
+                  <img
+                    class="add-to-wishlist-2"
+                    src="https://c.animaapp.com/me0c5zixpK3YId/img/add-to----wishlist.svg"
+                  />
+                  <div class="badge-medium-2"><div class="new-3">HOT</div></div>
+                </div>
+              </div>
+              <div class="content">
+                <div class="div-2">
+                  <div class="frame-7">
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                  </div>
+                  <div class="div-2">
+                    <div class="text-wrapper-7">wireless headphones</div>
+                    <div class="discount">
+                      <div class="text-wrapper-8">120 EGP</div>
+                      <div class="text-wrapper-9">160 EGP</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="group-3 product-card" onclick="goToProduct()">
+              <div class="elements-card">
+                <div class="overlap-group-2">
+                  <button class="button-hover action-btn"><div class="get-started">Add to cart</div></button>
+                  <img
+                    class="add-to-wishlist-2"
+                    src="https://c.animaapp.com/me0c5zixpK3YId/img/add-to----wishlist-3.svg"
+                  />
+                  <div class="badge-medium-2"><div class="new-3">HOT</div></div>
+                </div>
+              </div>
+              <div class="content">
+                <div class="div-2">
+                  <div class="frame-7">
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                    <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/five-star.svg" />
+                  </div>
+                  <div class="div-2">
+                    <div class="text-wrapper-7">wireless headphones</div>
+                    <div class="discount">
+                      <div class="text-wrapper-8">120 EGP</div>
+                      <div class="text-wrapper-9">160 EGP</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="brands-logos">
+          <div class="brand-logo">
+            <div class="logo-text">logoipsum</div>
+          </div>
+          <div class="brand-logo">
+            <div class="logo-icon">
+              <div class="logo-shape"></div>
+            </div>
+            <div class="logo-text">logoipsum.</div>
+          </div>
+          <div class="brand-logo">
+            <div class="logo-icon">
+              <div class="logo-circle">
+                <div class="logo-waves"></div>
+              </div>
+            </div>
+            <div class="logo-text">logoipsum</div>
+          </div>
+          <div class="brand-logo">
+            <div class="logo-text">logoipsum</div>
+          </div>
+          <div class="brand-logo">
+            <div class="logo-icon">
+              <div class="logo-shape"></div>
+            </div>
+            <div class="logo-text">logoipsum.</div>
+          </div>
+          <div class="brand-logo">
+            <div class="logo-icon">
+              <div class="logo-circle">
+                <div class="logo-waves"></div>
+              </div>
+            </div>
+            <div class="logo-text">logoipsum</div>
+          </div>
+        </div>
+        <div class="group-4">
+          <div class="frame-17">
+            <div class="overlap-group-wrapper">
+              <div class="overlap-group-3">
+                <img
+                  class="JBL-BOOMBOX-HERO"
+                  src="https://c.animaapp.com/me0c5zixpK3YId/img/jbl-boombox-2-hero-020-x1--1--1.png"
+                />
+                <div class="ellipse-2"></div>
+              </div>
+            </div>
+            <div class="group-5">
+              <div class="enhance-your-music-wrapper">
+                <p class="enhance-your-music">
+                  <span class="span">Enhance Your </span>
+                  <span class="text-wrapper-11">Music</span>
+                  <span class="span"> Experience</span>
+                </p>
+              </div>
+            </div>
+            <div class="frame-18">
+              <div class="div-wrapper action-btn" onclick="goToProduct()"><div class="text-wrapper-12">Buy Now</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="footer-mob">
+          <div class="overlap-2">
+            <div class="group-6"></div>
+            <div class="frame-19">
+              <div class="frame-20">
+                <p class="p">STAY UP TO DATE ABOUT OUR LATEST OFFERS</p>
+                <div class="frame-21">
+                  <div class="frame-22"><p class="text-wrapper-13">Enter your Email or WhatsApp Number</p></div>
+                  <div class="frame-23"><div class="text-wrapper-14">Subscribe to Newsletter</div></div>
+                </div>
+              </div>
+              <img class="logo" src="https://c.animaapp.com/me0c5zixpK3YId/img/logo-2.png" />
+              <div class="frame-24">
+                <div class="frame-24">
+                  <div class="frame-25">
+                    <div class="frame-26">
+                      <div class="frame-27">
+                        <div class="frame-28"><a href="#" class="footer-link"><div class="text-wrapper-15">Address</div></a></div>
+                      </div>
+                    </div>
+                    <div class="text-wrapper-16">Alatba - Momtaz St.</div>
+                  </div>
+                  <div class="frame-29">
+                    <div class="frame-28"><a href="contact.html" class="footer-link"><div class="text-wrapper-15">Contact</div></a></div>
+                  </div>
+                  <div class="frame-26"><a href="account-profile.html" class="footer-link"><div class="text-wrapper-17">Account</div></a></div>
+                  <div class="frame-26"><a href="category.html" class="footer-link"><div class="text-wrapper-17">Quick Link</div></a></div>
+                </div>
+                <img class="img-2" src="https://c.animaapp.com/me0c5zixpK3YId/img/frame-949.svg" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="group-7">
+        
+      </div>
+    </div>
+    
+    <script>
+      // Mobile menu functionality
+      function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const overlay = document.getElementById('overlay');
+        
+        menu.classList.toggle('active');
+        overlay.classList.toggle('active');
+        
+        // Add animation to menu items
+        const menuItems = menu.querySelectorAll('.menu-items a');
+        menuItems.forEach((item, index) => {
+          item.style.animationDelay = `${index * 0.1}s`;
+          item.classList.add('slide-in');
+        });
+      }
+      
+      // Search functionality
+      function openSearch() {
+        const searchOverlay = document.getElementById('searchOverlay');
+        const searchInput = document.getElementById('searchInput');
+        
+        searchOverlay.classList.add('active');
+        searchInput.focus();
+        
+        // Add click outside to close
+        searchOverlay.addEventListener('click', function(e) {
+          if (e.target === searchOverlay) {
+            closeSearch();
+          }
+        });
+        
+        // Add Enter key support
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            performSearch();
+          }
+        });
+      }
+      
+      function closeSearch() {
+        const searchOverlay = document.getElementById('searchOverlay');
+        const searchInput = document.getElementById('searchInput');
+        
+        searchOverlay.classList.remove('active');
+        searchInput.value = '';
+      }
+      
+      function performSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const searchTerm = searchInput.value.trim();
+        
+        if (searchTerm) {
+          // Navigate to search.html with the search term
+          window.location.href = `search.html?q=${encodeURIComponent(searchTerm)}`;
+        } else {
+          alert('Please enter a search term');
+        }
+      }
+      
+      // Navigation functions
+      function goToProduct() {
+        window.location.href = 'product-details.html';
+      }
+      
+      function goToFlashSale() {
+        window.location.href = 'flash sale.html';
+      }
+      
+      function goToCategory() {
+        window.location.href = 'category.html';
+      }
+      
+      // Add animations to page elements when loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        // Add fade-in animation to main content
+        const mainContent = document.querySelector('.home-mini .div');
+        mainContent.classList.add('fade-in');
+        
+        // Add bounce animation to navigation icons
+        const navIcons = document.querySelectorAll('.nav-link');
+        navIcons.forEach((icon, index) => {
+          icon.style.animationDelay = `${index * 0.2}s`;
+          icon.classList.add('bounce');
+        });
+        
+        // Add slide-in animation to text content
+        const textElements = document.querySelectorAll('.text-wrapper-4, .text-wrapper-10');
+        textElements.forEach((element, index) => {
+          element.style.animationDelay = `${index * 0.3}s`;
+          element.classList.add('slide-in');
+        });
+      });
+      
+      // Add hover effects to navigation links
+      document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        navLinks.forEach(link => {
+          link.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1)';
+          });
+          
+          link.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+          });
+          
+          link.addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+              this.style.transform = 'scale(1)';
+            }, 150);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
