@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="css/about globals.css" />
+    <link rel="stylesheet" href="css/about styleguide.css" />
+    <link rel="stylesheet" href="css/about style.css" />
+    <style>
+      /* Mobile Menu Styles */
+      .mobile-menu {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 280px;
+        height: 100vh;
+        background: #ffffff;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+      }
+      
+      .mobile-menu.active {
+        left: 0;
+      }
+      
+      .menu-header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        background: #f8f9fa;
+      }
+      
+      .menu-user {
+        font-family: "Poppins", Helvetica;
+        font-weight: 600;
+        color: #333;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      
+      .menu-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+      }
+      
+      .menu-items {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+      
+      .menu-items li {
+        border-bottom: 1px solid #f0f0f0;
+      }
+      
+      .menu-items a {
+        display: block;
+        padding: 15px 20px;
+        color: #333;
+        text-decoration: none;
+        font-family: "Poppins", Helvetica;
+        font-size: 14px;
+        transition: background-color 0.2s ease;
+      }
+      
+      .menu-items a:hover {
+        background-color: #f8f9fa;
+      }
+      
+      .menu-items .submenu {
+        padding-left: 20px;
+        background: #fafafa;
+      }
+      
+      .menu-items .submenu a {
+        padding: 10px 20px;
+        font-size: 13px;
+        color: #666;
+      }
+      
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      
+      .overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      /* Animation classes */
+      .fade-in {
+        animation: fadeIn 0.5s ease-in;
+      }
+      
+      .slide-in {
+        animation: slideIn 0.3s ease-out;
+      }
+      
+      .bounce {
+        animation: bounce 0.6s ease;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      @keyframes slideIn {
+        from { transform: translateX(-20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+      }
+      
+      /* Interactive elements */
+      .nav-link {
+        cursor: pointer;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+      
+      .nav-link:hover {
+        transform: scale(1.1);
+        opacity: 0.8;
+      }
+      
+      .nav-link:active {
+        transform: scale(0.95);
+      }
+      
+      /* Breadcrumb hover effects */
+      .breadcrumb-link {
+        color: #666 !important;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        cursor: pointer;
+      }
+      
+      .breadcrumb-link:hover {
+        color: #1e3a8a !important; /* Dark blue */
+      }
+      
+      .breadcrumb-link .span {
+        color: #b2b2b2 !important;
+        transition: color 0.3s ease;
+      }
+      
+      .breadcrumb-link:hover .span {
+        color: #1e3a8a !important; /* Dark blue */
+      }
+      
+      /* Footer link hover effects */
+      .footer-link {
+        color: inherit !important;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        cursor: pointer;
+      }
+      
+      .footer-link:hover {
+        color: #b45309 !important; /* Dark yellow */
+      }
+      
+      .footer-link .text-wrapper-3 {
+        color: var(--white) !important;
+        transition: color 0.3s ease;
+      }
+      
+      .footer-link:hover .text-wrapper-3 {
+        color: #b45309 !important; /* Dark yellow */
+      }
+      
+      .footer-link .text-wrapper-5 {
+        color: var(--text) !important;
+        transition: color 0.3s ease;
+      }
+      
+      .footer-link:hover .text-wrapper-5 {
+        color: #b45309 !important; /* Dark yellow */
+      }
+      
+      /* Search box styles */
+      .search-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 2000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .search-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .search-box {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        transform: translateY(-20px);
+        transition: transform 0.3s ease;
+      }
+      
+      .search-overlay.active .search-box {
+        transform: translateY(0);
+      }
+      
+      .search-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      
+      .search-title {
+        font-family: "Poppins", Helvetica;
+        font-weight: 600;
+        color: #333;
+        font-size: 18px;
+      }
+      
+      .search-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .search-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-family: "Poppins", Helvetica;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+        margin-bottom: 15px;
+      }
+      
+      .search-input:focus {
+        outline: none;
+        border-color: #1e3a8a;
+      }
+      
+      .search-button {
+        width: 100%;
+        padding: 12px;
+        background: #1e3a8a;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-family: "Poppins", Helvetica;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      
+      .search-button:hover {
+        background: #1e40af;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="about-mini">
+      <div class="div">
+        <div class="nav-bar-mob">
+          <div class="frame">
+            <img class="vector nav-link" src="https://c.animaapp.com/me02orafcNikSe/img/vector-1.svg" onclick="toggleMenu()" />
+            <div class="hello-ahmed-salah">مرحباً،<br />أحمد صلاح</div>
+          </div>
+          <div class="frame-2">
+            <a href="index.html">
+              <img class="logo-removebg nav-link" src="https://c.animaapp.com/me02orafcNikSe/img/logo-removebg-1.png" />
+            </a>
+            <div class="frame-3">
+              <img class="img nav-link" src="https://c.animaapp.com/me02orafcNikSe/img/vector.svg" onclick="openSearch()" />
+              <a href="wishlist.html">
+                <img class="heart nav-link" src="https://c.animaapp.com/me02orafcNikSe/img/heart.svg" />
+              </a>
+              <a href="cart.html">
+                <img class="cart nav-link" src="https://c.animaapp.com/me02orafcNikSe/img/cart.svg" />
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Search Overlay -->
+        <div class="search-overlay" id="searchOverlay">
+          <div class="search-box">
+            <div class="search-header">
+              <div class="search-title">البحث عن المنتجات</div>
+              <button class="search-close" onclick="closeSearch()">&times;</button>
+            </div>
+            <input type="text" class="search-input" id="searchInput" placeholder="أدخل كلمة البحث..." />
+            <button class="search-button" onclick="performSearch()">بحث</button>
+          </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+          <div class="menu-header">
+            <button class="menu-close" onclick="toggleMenu()">&times;</button>
+            <div class="menu-user">أحمد صلاح</div>
+          </div>
+          <ul class="menu-items">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="category.html">الفئات</a></li>
+            <li>
+              <a href="#">المستوى الأول</a>
+              <ul class="submenu">
+                <li><a href="#">المستوى الثاني</a></li>
+                <li><a href="#">المستوى الثالث</a></li>
+              </ul>
+            </li>
+            <li><a href="wishlist.html">المفضلة</a></li>
+            <li><a href="cart.html">السلة</a></li>
+            <li><a href="contact.html">اتصل بنا</a></li>
+            <li><a href="about.html">عنّا</a></li>
+            <li>
+              <a href="account-profile.html">الحساب</a>
+              <ul class="submenu">
+                <li><a href="account-profile.html">الملف الشخصي</a></li>
+                <li><a href="account-orders.html">الطلبات</a></li>
+                <li><a href="account-address.html">العناوين</a></li>
+              </ul>
+            </li>
+            <li><a href="../english/about.html">English</a></li>
+            <li><a href="login.html">تسجيل الخروج</a></li>
+          </ul>
+        </div>
+        
+        <!-- Overlay -->
+        <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+        
+        <div class="footer-mob">
+          <div class="overlap-group">
+            <div class="group"></div>
+            <div class="frame-4">
+              <div class="frame-5">
+                <p class="text-wrapper">كن متابع لتصلك آخر عروضنا باستمرار</p>
+                <div class="frame-6">
+                  <div class="div-wrapper"><p class="p">أدخل بريدك الإلكتروني أو رقم الواتساب</p></div>
+                  <div class="frame-7"><div class="text-wrapper-2">اشترك في النشرة الإخبارية</div></div>
+                </div>
+              </div>
+              <img class="logo" src="https://c.animaapp.com/me02orafcNikSe/img/logo-2.png" />
+              <div class="frame-8">
+                <div class="frame-8">
+                  <div class="frame-9">
+                    <div class="frame-10">
+                      <div class="frame-wrapper">
+                        <div class="frame-11"><a href="#" class="footer-link"><div class="text-wrapper-3">العنوان</div></a></div>
+                      </div>
+                    </div>
+                    <div class="text-wrapper-4">العتبة - شارع ممتاز</div>
+                  </div>
+                  <div class="frame-12">
+                    <div class="frame-11"><a href="contact.html" class="footer-link"><div class="text-wrapper-3">تواصل معنا</div></a></div>
+                  </div>
+                  <div class="frame-10"><a href="account-profile.html" class="footer-link"><div class="text-wrapper-5">الحساب</div></a></div>
+                  <div class="frame-10"><a href="category.html" class="footer-link"><div class="text-wrapper-5">روابط سريعة</div></a></div>
+                </div>
+                <img class="frame-13" src="https://c.animaapp.com/me02orafcNikSe/img/frame-949.svg" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="home-about">
+          <a href="index.html" class="breadcrumb-link"><span class="span">الرئيسية</span></a>
+          <span class="text-wrapper-6">&nbsp;</span>
+          <span class="span">/</span>
+          <span class="text-wrapper-6">&nbsp;</span>
+          <span class="text-wrapper-7">عنّا</span>
+        </p>
+        <div class="text-wrapper-8">عنوان المقال</div>
+        <div class="text-wrapper-9">عنوان المقال</div>
+        <img class="logo-removebg-2" src="https://c.animaapp.com/me02orafcNikSe/img/logo-removebg-2.png" />
+        <p class="text-wrapper-10">
+          موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال
+          موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال
+          موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال
+          موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال
+        </p>
+        <p class="text-wrapper-11">
+          موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال
+          موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال
+          موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال
+          موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال موضوع المقال
+        </p>
+        <div class="group-2">
+         
+      </div>
+    </div>
+    
+    <script>
+      // Mobile menu functionality
+      function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const overlay = document.getElementById('overlay');
+        
+        menu.classList.toggle('active');
+        overlay.classList.toggle('active');
+        
+        // Add animation to menu items
+        const menuItems = menu.querySelectorAll('.menu-items a');
+        menuItems.forEach((item, index) => {
+          item.style.animationDelay = `${index * 0.1}s`;
+          item.classList.add('slide-in');
+        });
+      }
+      
+      // Search functionality
+      function openSearch() {
+        const searchOverlay = document.getElementById('searchOverlay');
+        const searchInput = document.getElementById('searchInput');
+        
+        searchOverlay.classList.add('active');
+        searchInput.focus();
+        
+        // Add click outside to close
+        searchOverlay.addEventListener('click', function(e) {
+          if (e.target === searchOverlay) {
+            closeSearch();
+          }
+        });
+        
+        // Add Enter key support
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            performSearch();
+          }
+        });
+      }
+      
+      function closeSearch() {
+        const searchOverlay = document.getElementById('searchOverlay');
+        const searchInput = document.getElementById('searchInput');
+        
+        searchOverlay.classList.remove('active');
+        searchInput.value = '';
+      }
+      
+      function performSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const searchTerm = searchInput.value.trim();
+        
+        if (searchTerm) {
+          // Navigate to search.html with the search term
+          window.location.href = `search.html?q=${encodeURIComponent(searchTerm)}`;
+        } else {
+          alert('يرجى إدخال كلمة البحث');
+        }
+      }
+      
+      // Add animations to page elements when loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        // Add fade-in animation to main content
+        const mainContent = document.querySelector('.about-mini .div');
+        mainContent.classList.add('fade-in');
+        
+        // Add bounce animation to navigation icons
+        const navIcons = document.querySelectorAll('.nav-link');
+        navIcons.forEach((icon, index) => {
+          icon.style.animationDelay = `${index * 0.2}s`;
+          icon.classList.add('bounce');
+        });
+        
+        // Add slide-in animation to text content
+        const textElements = document.querySelectorAll('.text-wrapper-8, .text-wrapper-9, .text-wrapper-10, .text-wrapper-11');
+        textElements.forEach((element, index) => {
+          element.style.animationDelay = `${index * 0.3}s`;
+          element.classList.add('slide-in');
+        });
+      });
+      
+      // Add hover effects to navigation links
+      document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        navLinks.forEach(link => {
+          link.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1)';
+          });
+          
+          link.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+          });
+          
+          link.addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+              this.style.transform = 'scale(1)';
+            }, 150);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
